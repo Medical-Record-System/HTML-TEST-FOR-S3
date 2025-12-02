@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask API Tester - User Auth</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styling for better presentation */
+        #dataDisplay {
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 sm:p-8 font-['Inter']">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-800 mb-2">
+                Secure User Authentication Tester
+            </h1>
+            <p class="text-gray-600">
+                Test the <code class="bg-gray-200 p-1 rounded">/register</code> and <code class="bg-gray-200 p-1 rounded">/login</code> endpoints using secure **bcrypt** hashing.
+            </p>
+        </header>
+
+        <!-- Status & Message Box -->
+        <div id="messageBox" class="p-3 mb-6 hidden rounded-lg shadow-md transition-opacity duration-300" role="alert">
+            <div id="statusText" class="font-semibold"></div>
+        </div>
+
+        <!-- 1. User Registration (POST /register) - NEW FORM -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border-l-4 border-indigo-500">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">1. Register New User (POST /register)</h2>
+            <p class="text-gray-600 mb-4 text-sm">
+                The password will be securely hashed with bcrypt before storage.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <input type="text" id="regUsername" placeholder="Username"
+                       class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <input type="password" id="regPassword" placeholder="Password"
+                       class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+            <button id="registerBtn"
+                    class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out transform hover:scale-[1.01]">
+                Register User
+            </button>
+        </div>
+
+        <!-- 2. User Login (POST /login) - NEW FORM -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border-l-4 border-green-500">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">2. User Login (POST /login)</h2>
+            <p class="text-gray-600 mb-4 text-sm">
+                The provided password will be hashed and compared against the stored hash.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 mb-4">
+                <input type="text" id="loginUsername" placeholder="Username"
+                       class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+                <input type="password" id="loginPassword" placeholder="Password"
+                       class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500">
+            </div>
+            <button id="loginBtn"
+                    class="w-full sm:w-auto px-6 py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 transition duration-150 ease-in-out transform hover:scale-[1.01]">
+                Login
+            </button>
+            <div id="loginResultDisplay" class="mt-4 p-3 bg-gray-50 text-gray-800 rounded-lg text-sm font-mono hidden">
+                Login result will appear here...
+            </div>
+        </div>
+
+        <!-- API Read Section (GET /read) - RETAINED -->
+        <div class="bg-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">3. View Stored Data (GET /read)</h2>
+            <button id="fetchBtn"
+                    class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-150 ease-in-out transform hover:scale-[1.01] mb-4">
+                Fetch All Data (View User Hashes)
+            </button>
+
+            <div id="dataDisplay" class="bg-gray-50 border border-gray-200 p-4 rounded-lg text-sm font-mono text-gray-700">
+                Click "Fetch All Data" to see stored usernames and **bcrypt hashes**...
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        const messageBox = document.getElementById('messageBox');
+        const statusText = document.getElementById('statusText');
+        const dataDisplay = document.getElementById('dataDisplay');
+
+        /**
+         * Utility function to show status messages.
+         */
+        function showMessage(message, isError = false) {
+            statusText.textContent = message;
+            // Removed old colors, added specific ones for auth flow
+            messageBox.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'bg-yellow-100', 'text-red-800', 'text-green-800', 'text-yellow-800');
+
+            if (isError) {
+                messageBox.classList.add('bg-red-100', 'text-red-800');
+            } else {
+                messageBox.classList.add('bg-green-100', 'text-green-800');
+            }
+
+            // Show and hide after 5 seconds
+            messageBox.classList.remove('hidden');
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+            }, 5000);
+        }
+
+        // --- NEW: 1. User Registration (POST /register) ---
+        document.getElementById('registerBtn').addEventListener('click', async () => {
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+
+            if (!username || !password) {
+                showMessage("Please enter both a username and password to register.", true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(`SUCCESS: User ${data.username} registered. Hash stored.`, false);
+                    document.getElementById('regUsername').value = '';
+                    document.getElementById('regPassword').value = '';
+                } else {
+                    showMessage(`ERROR (${response.status}): ${data.error || data.message || 'Server rejected registration.'}`, true);
+                }
+
+            } catch (error) {
+                showMessage(`Network Error: Could not reach the API at ${API_BASE_URL}. Is your Flask app running?`, true);
+                console.error('Fetch error:', error);
+            }
+        });
+
+        // --- NEW: 2. User Login (POST /login) ---
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const loginResultDisplay = document.getElementById('loginResultDisplay');
+
+            loginResultDisplay.classList.add('hidden');
+            loginResultDisplay.classList.remove('bg-red-100', 'bg-green-100', 'text-red-800', 'text-green-800');
+
+            if (!username || !password) {
+                showMessage("Please enter both a username and password to log in.", true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                loginResultDisplay.textContent = JSON.stringify(data, null, 2);
+                loginResultDisplay.classList.remove('hidden');
+
+                if (response.ok && data.authenticated) {
+                    showMessage(data.message, false);
+                    loginResultDisplay.classList.add('bg-green-100', 'text-green-800');
+                } else {
+                    // 401 Unauthorized or other error
+                    showMessage(data.message || data.error || 'Login attempt failed.', true);
+                    loginResultDisplay.classList.add('bg-red-100', 'text-red-800');
+                }
+
+            } catch (error) {
+                showMessage(`Network Error: Could not reach the API at ${API_BASE_URL}. Is your Flask app running?`, true);
+                console.error('Fetch error:', error);
+            }
+        });
+
+
+        // --- 3. Original /read functionality (Modified to show user data) ---
+        document.getElementById('fetchBtn').addEventListener('click', async () => {
+            dataDisplay.textContent = 'Fetching data...';
+            try {
+                const response = await fetch(`${API_BASE_URL}/read`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Display the JSON data in a readable format
+                    dataDisplay.textContent = JSON.stringify(data, null, 2);
+                    showMessage(`Successfully fetched ${Array.isArray(data) ? data.length : 0} user records.`, false);
+                } else {
+                    dataDisplay.textContent = `Error (${response.status}): ${data.error || 'Failed to fetch data.'}`;
+                    showMessage(`Error (${response.status}): Failed to read data.`, true);
+                }
+
+            } catch (error) {
+                dataDisplay.textContent = `Network Error: Could not reach the API. Is your Flask app running?`;
+                showMessage(`Network Error: Could not reach the API at ${API_BASE_URL}.`, true);
+                console.error('Fetch error:', error);
+            }
+        });
+    </script>
+
+</body>
+</html>
