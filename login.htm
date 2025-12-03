@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Health Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(1deg, #961877 1%, #8b63b4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 40px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: white;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .login-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+        }
+        
+        .form-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: #5457ff;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .form-footer p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .form-footer a {
+            color: #5457ff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Pallo's Healthcare</div>
+            <div class="subtitle">Patient Login</div>
+        </div>
+
+        <div class="login-card">
+            <h2 class="form-title">Sign In</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Login to Account</button>
+            </form>
+
+            <div class="form-footer">
+                <p>Don't have an account? <a href="signup.html">Sign up here</a></p>
+                <p><a href="index.html"> Back to Home</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

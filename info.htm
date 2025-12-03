@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Record - Health Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(1deg, #961877 1%, #8b63b4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 35px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: white;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .record-card {
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+        }
+        
+        .form-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: black;
+            font-size: 26px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        textarea.form-control {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #5457ff;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .form-footer a {
+            color: #5457ff;
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Pallo Healthcare</div>
+        </div>
+
+        <div class="record-card">
+            <h2 class="form-title">New Patient Record</h2>
+            <form id="addRecordForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patientId">Patient ID</label>
+                        <input type="text" id="patientId" class="form-control" placeholder="Enter patient ID" >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" class="form-control" placeholder="Age" min="0" max="120" >
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="patientName">Patient Name</label>
+                    <input type="text" id="patientName" class="form-control" placeholder="name" >
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" class="form-control" >
+                            <option value="">Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="diagnosis">Diagnosis</label>
+                    <input type="text" id="diagnosis" class="form-control"placeholder="enter Diagnossis"  >
+                </div>
+                
+                <div class="form-group">
+                    <label for="treatment">Treatment</label>
+                    <input type=text id="treatment" class="form-control" placeholder="enter treatment plan">
+                </div>
+                
+                <div class="form-group">
+                    <label for="medication">Medication </label>
+                    <input type=text id="medication" class="form-control" placeholder="enter medications"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="doctor">Staff ID</label>
+                    <input type="text" id="doctor" class="form-control" placeholder="enter staff ID" >
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Add Record</button>
+            </form>
+
+            <div class="form-footer">
+                <a href="mainpagebeta.html">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
